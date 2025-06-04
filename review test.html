@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide to Writing a Review</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Cream & Sage -->
+    <!-- Application Structure Plan: The application is structured as a single-page, tab-based interface to create a focused and interactive learning experience. Instead of a linear document, students can navigate between three core sections: "The 4-Part Structure," "Language Toolkit," and "Pro Tips." This non-linear, user-driven approach allows students to explore concepts at their own pace, reinforcing learning through interaction. The "Structure" section is designed to be highly interactive, letting users click on each part to see its explanation and its corresponding role in a full example text, making the abstract structure tangible and easy to understand. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: The 4-part review structure. -> Goal: Organize & Explain. -> Viz/Presentation: Interactive HTML/CSS tabs with a highlighted example text block. -> Interaction: User clicks a tab (e.g., "Introduction") to see its purpose, content, and the corresponding text highlighted in the full example. -> Justification: This makes the connection between theory and practice explicit and easier to grasp than static text. -> Library/Method: Vanilla JS & Tailwind CSS.
+        - Report Info: Key language elements (linking words, adjectives). -> Goal: Inform & Provide Tools. -> Viz/Presentation: Categorized, expandable HTML lists within a "Toolkit" tab. -> Interaction: User clicks on categories to reveal lists of words. -> Justification: Organizes a large amount of information neatly, preventing cognitive overload. -> Library/Method: Vanilla JS & Tailwind CSS.
+        - Report Info: The concept of a "Balanced Perspective." -> Goal: Illustrate a concept. -> Viz/Presentation: A Doughnut Chart. -> Interaction: A static visual showing the ideal proportions of a balanced review (e.g., positive, negative, descriptive points). -> Justification: Provides a memorable visual metaphor for an important, abstract concept and fulfills the Chart.js requirement. -> Library/Method: Chart.js.
+        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .tab-active { background-color: #38a169; color: white; }
+        .tab-inactive { background-color: #e2e8f0; color: #4a5568; }
+        .content-active { display: block; }
+        .content-inactive { display: none; }
+        .highlight-text { background-color: #fefcbf; transition: background-color 0.3s ease-in-out; }
+        .chart-container { position: relative; width: 100%; max-width: 350px; margin-left: auto; margin-right: auto; height: 350px; max-height: 400px; }
+        @media (max-width: 640px) { .chart-container { height: 300px; max-width: 300px; } }
+    </style>
+</head>
+<body class="bg-[#fdfaf6] text-gray-800 antialiased">
+
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-5xl">
+
+        <header class="text-center mb-8 md:mb-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Interactive Guide to Writing an Effective Review</h1>
+            <p class="mt-2 text-lg text-gray-600">Your essential tool for mastering the IGCSE English exam.</p>
+        </header>
+
+        <nav class="flex justify-center mb-8 md:mb-12 rounded-lg p-1 bg-gray-200/80 shadow-inner">
+            <button data-tab="structure" class="tab-btn tab-active text-sm sm:text-base font-medium py-2 px-4 sm:px-6 rounded-md transition-all duration-300">The 4-Part Structure</button>
+            <button data-tab="toolkit" class="tab-btn tab-inactive text-sm sm:text-base font-medium py-2 px-4 sm:px-6 rounded-md transition-all duration-300">Language Toolkit</button>
+            <button data-tab="tips" class="tab-btn tab-inactive text-sm sm:text-base font-medium py-2 px-4 sm:px-6 rounded-md transition-all duration-300">Pro Tips</button>
+        </nav>
+
+        <main>
+            <section id="structure" class="tab-content content-active">
+                <div class="text-center mb-8">
+                     <h2 class="text-2xl font-bold text-gray-800">Deconstructing a Review</h2>
+                     <p class="mt-2 text-gray-600 max-w-2xl mx-auto">A great review has a clear, logical structure. This helps your reader follow your thoughts easily. Click on each of the four parts below to see its purpose and how it works in a real example.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="flex flex-col space-y-4">
+                        <button data-part="intro" class="part-btn text-left p-4 bg-white rounded-lg shadow-md border-l-4 border-green-500 transition-transform duration-200 hover:scale-105">
+                            <h3 class="font-bold text-lg">1. Introduction</h3>
+                            <p class="text-sm text-gray-500">Grab the reader's attention and state what you're reviewing.</p>
+                        </button>
+                        <button data-part="desc" class="part-btn text-left p-4 bg-white rounded-lg shadow-md border-l-4 border-blue-500 transition-transform duration-200 hover:scale-105">
+                            <h3 class="font-bold text-lg">2. Brief Description</h3>
+                            <p class="text-sm text-gray-500">Provide key background details and facts.</p>
+                        </button>
+                        <button data-part="opinion" class="part-btn text-left p-4 bg-white rounded-lg shadow-md border-l-4 border-purple-500 transition-transform duration-200 hover:scale-105">
+                            <h3 class="font-bold text-lg">3. Opinion / Experience</h3>
+                            <p class="text-sm text-gray-500">Share your detailed thoughts, both positive and negative.</p>
+                        </button>
+                        <button data-part="rec" class="part-btn text-left p-4 bg-white rounded-lg shadow-md border-l-4 border-orange-500 transition-transform duration-200 hover:scale-105">
+                            <h3 class="font-bold text-lg">4. Recommendation</h3>
+                            <p class="text-sm text-gray-500">Summarize your view and give a final verdict.</p>
+                        </button>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div id="part-display" class="mb-6 min-h-[120px]">
+                            <h4 id="part-title" class="font-bold text-xl text-gray-800 mb-2">Click a part to learn more!</h4>
+                            <p id="part-purpose" class="text-gray-600 mb-2"></p>
+                            <p id="part-content" class="text-gray-600"></p>
+                        </div>
+                        <h4 class="font-bold text-lg mb-2 text-gray-700">Restaurant Review Example:</h4>
+                        <div id="example-text" class="text-gray-700 space-y-3 p-4 bg-gray-50 rounded-md border">
+                            <p data-highlight="intro">Today, I'd like to share my experience at 'The Spice Route,' a newly opened Indian restaurant located in the bustling heart of Altamura.</p>
+                            <p data-highlight="desc">Upon entering, I was immediately struck by the warm, inviting decor, featuring traditional Indian artwork and soft lighting. The menu boasts a wide array of classic dishes from various regions of India, alongside some modern interpretations.</p>
+                            <p data-highlight="opinion">The 'Butter Chicken' was exceptionally creamy and flavourful, perfectly balanced with aromatic spices, while the 'Garlic Naan' was freshly baked and delightfully fluffy. However, the 'Vegetable Biryani,' although generous in portion, lacked a certain depth of flavour. The service, on the other hand, was impeccable; our waiter was attentive and knowledgeable, offering excellent recommendations. Despite the slightly higher prices, the overall quality justified the cost.</p>
+                            <p data-highlight="rec">Overall, 'The Spice Route' offers a truly authentic dining experience. I highly recommend it for anyone seeking delicious Indian cuisine in a charming setting, especially for special occasions. While a bit pricey, it's definitely worth a visit.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="toolkit" class="tab-content content-inactive">
+                 <div class="text-center mb-8">
+                     <h2 class="text-2xl font-bold text-gray-800">Language Toolkit</h2>
+                     <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Great reviews use precise and engaging language. Explore this toolkit to find words and phrases that will make your writing flow smoothly and paint a vivid picture for your reader.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 class="font-bold text-xl mb-4 text-gray-800">🔗 Linking Words & Cohesive Devices</h3>
+                        <p class="text-gray-600 mb-4">These are the glue that holds your ideas together, creating a logical flow.</p>
+                        <div class="space-y-3">
+                            <details class="group">
+                                <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Adding information <span class="text-green-600 group-open:rotate-180 transition-transform">▼</span></summary>
+                                <p class="text-gray-600 mt-2 pl-4 border-l-2">Furthermore, in addition, moreover, also, besides.</p>
+                            </details>
+                            <details class="group">
+                                <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Contrasting ideas <span class="text-green-600 group-open:rotate-180 transition-transform">▼</span></summary>
+                                <p class="text-gray-600 mt-2 pl-4 border-l-2">However, nevertheless, although, despite, on the other hand.</p>
+                            </details>
+                            <details class="group">
+                                <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Showing cause and effect <span class="text-green-600 group-open:rotate-180 transition-transform">▼</span></summary>
+                                <p class="text-gray-600 mt-2 pl-4 border-l-2">Therefore, as a result, consequently, because of this.</p>
+                            </details>
+                             <details class="group">
+                                <summary class="font-medium cursor-pointer list-none flex justify-between items-center">Summarizing <span class="text-green-600 group-open:rotate-180 transition-transform">▼</span></summary>
+                                <p class="text-gray-600 mt-2 pl-4 border-l-2">In conclusion, overall, to sum up, in short.</p>
+                            </details>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 class="font-bold text-xl mb-4 text-gray-800">🎨 Effective Use of Adjectives</h3>
+                        <p class="text-gray-600 mb-4">Adjectives add detail and colour, helping the reader visualize your experience.</p>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="font-medium">Instead of "good," try:</p>
+                                <p class="text-gray-600">excellent, superb, satisfying, pleasant, delightful, wonderful.</p>
+                            </div>
+                            <div>
+                                <p class="font-medium">Instead of "bad," try:</p>
+                                <p class="text-gray-600">disappointing, unappetizing, poor, mediocre, dreadful.</p>
+                            </div>
+                             <div>
+                                <p class="font-bold text-green-700">Be specific!</p>
+                                <p class="text-gray-500">"The spring rolls were good."</p>
+                                <p class="text-gray-700">"The <span class="font-semibold text-green-800">crispy</span> spring rolls were <span class="font-semibold text-green-800">delightfully</span> seasoned."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="tips" class="tab-content content-inactive">
+                <div class="text-center mb-8">
+                     <h2 class="text-2xl font-bold text-gray-800">Pro Tips for a Top-Grade Review</h2>
+                     <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Beyond structure and language, a few key strategies can elevate your review from good to great. Consider these points to impress your reader and show critical thinking.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-lg space-y-4">
+                        <div class="flex items-start space-x-4">
+                            <span class="text-2xl">🎯</span>
+                            <div>
+                                <h4 class="font-bold">Target Audience and Purpose</h4>
+                                <p class="text-gray-600">Always consider who you're writing for and what your goal is. Are you informing, recommending, or warning them?</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <span class="text-2xl">⚖️</span>
+                            <div>
+                                <h4 class="font-bold">Maintain a Balanced Perspective</h4>
+                                <p class="text-gray-600">A good review is honest. Even if your experience was mostly positive, mentioning a small drawback makes your review more credible. The chart illustrates a good balance.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <span class="text-2xl">✍️</span>
+                             <div>
+                                <h4 class="font-bold">Be Clear and Concise</h4>
+                                <p class="text-gray-600">Use straightforward language. Your goal is to be understood easily, not to use overly complex words.</p>
+                            </div>
+                        </div>
+                         <div class="flex items-start space-x-4">
+                            <span class="text-2xl">😊</span>
+                             <div>
+                                <h4 class="font-bold">Use an Engaging Tone</h4>
+                                <p class="text-gray-600">Let your personality show! Write with genuine enthusiasm or disappointment to connect with your reader.</p>
+                            </div>
+                        </div>
+                         <div class="flex items-start space-x-4">
+                            <span class="text-2xl">✅</span>
+                             <div>
+                                <h4 class="font-bold">Proofread Carefully</h4>
+                                <p class="text-gray-600">Errors in grammar or spelling can distract the reader and reduce your credibility. Always double-check your work.</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col justify-center items-center">
+                        <h3 class="font-bold text-xl mb-4 text-center text-gray-800">Visualizing a Balanced Review</h3>
+                        <div class="chart-container">
+                             <canvas id="balanceChart"></canvas>
+                        </div>
+                        <p class="text-center text-gray-600 mt-4">A credible review often covers descriptions, positive points, and constructive criticism.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const partButtons = document.querySelectorAll('.part-btn');
+
+        const partDetails = {
+            intro: {
+                title: "1. Introduction",
+                purpose: "Purpose: Grab the reader's attention and state what you are reviewing.",
+                content: "Content: Briefly introduce the item (e.g., the restaurant's name and location). You might also mention why you chose to review it."
+            },
+            desc: {
+                title: "2. Brief Description",
+                purpose: "Purpose: Provide necessary background information without giving away your opinion yet.",
+                content: "Content: Describe key features. For a restaurant, this could include the ambiance, decor, type of cuisine, or general atmosphere."
+            },
+            opinion: {
+                title: "3. Opinion / Detailed Experience",
+                purpose: "Purpose: This is the core of your review where you share your positive and negative points.",
+                content: "Content: Discuss specific aspects in detail like food, service, and value. Support your opinions with specific examples."
+            },
+            rec: {
+                title: "4. Recommendation / Conclusion",
+                purpose: "Purpose: Summarize your overall impression and advise the reader.",
+                content: "Content: State whether you recommend the item and for whom. You can also offer a final thought or rating."
+            }
+        };
+
+        function switchTab(tabId) {
+            tabButtons.forEach(btn => {
+                if (btn.dataset.tab === tabId) {
+                    btn.classList.replace('tab-inactive', 'tab-active');
+                } else {
+                    btn.classList.replace('tab-active', 'tab-inactive');
+                }
+            });
+
+            tabContents.forEach(content => {
+                if (content.id === tabId) {
+                    content.classList.replace('content-inactive', 'content-active');
+                } else {
+                    content.classList.replace('content-active', 'content-inactive');
+                }
+            });
+        }
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => switchTab(button.dataset.tab));
+        });
+
+        partButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const partId = button.dataset.part;
+                const details = partDetails[partId];
+
+                document.getElementById('part-title').textContent = details.title;
+                document.getElementById('part-purpose').textContent = details.purpose;
+                document.getElementById('part-content').textContent = details.content;
+
+                document.querySelectorAll('#example-text p').forEach(p => {
+                    p.classList.remove('highlight-text');
+                    if (p.dataset.highlight === partId) {
+                        p.classList.add('highlight-text');
+                    }
+                });
+            });
+        });
+
+        const ctx = document.getElementById('balanceChart').getContext('2d');
+        const balanceChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Positive Points', 'Description', 'Negative Points'],
+                datasets: [{
+                    label: 'Review Balance',
+                    data: [55, 30, 15],
+                    backgroundColor: [
+                        '#48bb78', // Green
+                        '#4299e1', // Blue
+                        '#f56565'  // Red
+                    ],
+                    borderColor: '#fdfaf6',
+                    borderWidth: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                size: 14
+                            },
+                            color: '#4a5568'
+                        }
+                    },
+                    tooltip: {
+                         callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += context.parsed + '%';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+        
+        // Initialize first part display
+        partButtons[0].click();
+
+    </script>
+</body>
+</html>
